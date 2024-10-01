@@ -1,0 +1,125 @@
+/* Estilos generales */
+body {
+    background-color: #f7f7f7;
+}
+
+/* Estilos del encabezado */
+.header {
+    background-color: #1abb2e;
+    color: white;
+    padding: 2rem;
+    text-align: center;
+    border-radius: 0.5rem;
+}
+
+.header h1 {
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+/* Estilos para la lista */
+.list-group-item {
+    background-color: #f4f4f4;
+    border: none;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.list-group-item:hover {
+    background-color: #cfe2ff;
+}
+
+.list-group-item-action {
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+/* Estilos para la tabla */
+.table {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.table th {
+    background-color: #1abb2e;
+    color: white;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.table-hover tbody tr {
+    transition: background-color 0.3s ease;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(26, 187, 46, 0.1) !important;
+}
+
+.table th, .table td {
+    vertical-align: middle;
+}
+
+/* Estilos para los botones */
+.btn {
+    transition: transform 0.2s ease-in-out;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+
+.btn-warning:hover {
+    background-color: #f0ad4e;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-danger:hover {
+    background-color: #d9534f;
+}
+
+.btn-primary {
+    background-color: #1abb2e;
+    border-color: #1abb2e;
+}
+
+.btn-primary:hover {
+    background-color: #17a923;
+}
+
+.btn-back {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+}
+
+/* Otros estilos */
+.navbar {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.no-orders {
+    text-align: center;
+    font-size: 18px;
+    color: #777;
+    margin-top: 20px;
+}

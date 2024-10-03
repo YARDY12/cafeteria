@@ -3,6 +3,28 @@ body {
     background-color: #f7f7f7;
 }
 
+.header {
+    display: flex; /* Activa Flexbox */
+    align-items: center; /* Alinea verticalmente al centro */
+    justify-content: center; /* Alinea horizontalmente al centro */
+}
+
+.text-content {
+    margin-right: 10px; /* Espacio entre el texto y la imagen */
+}
+
+h1 {
+    margin-bottom: 10px; /* Espacio debajo del encabezado */
+}
+
+.mi-imagen {
+    max-width: 12%;
+    height: auto; /* Mantiene la proporción de la imagen */
+    margin-left: 40px; /* Mueve la imagen más a la derecha */
+}
+
+
+
 /* Estilos del encabezado */
 .header {
     background-color: #1abb2e;

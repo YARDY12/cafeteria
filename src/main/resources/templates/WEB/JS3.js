@@ -14,8 +14,9 @@ if (detalleId) {
 if (detallePedidoForm) {
     detallePedidoForm.addEventListener('submit', (e) => {
         e.preventDefault();
+        const idDetalle = document.getElementById('id_detalle').value;
         const idPedido = document.getElementById('id_pedido').value;
-
+        const idProducto = document.getElementById('id_producto').value;
         const cantidad = parseFloat(document.getElementById('cantidad').value);
         const subtotal = parseFloat(document.getElementById('subtotal').value);
         const notaDetalle = document.getElementById('nota_detalle').value;
@@ -24,8 +25,9 @@ if (detallePedidoForm) {
         const descuento = parseFloat(document.getElementById('descuento').value);
 
         const detallePedidoData = {
+            id_detalle: idDetalle,
             pedido: { id_pedido: idPedido },
-
+            producto: { id_producto: idProducto },
             cantidad: cantidad,
             subtotal: subtotal,
             nota_detalle: notaDetalle,
@@ -39,7 +41,11 @@ if (detallePedidoForm) {
             updateDetallePedido(detalleId, detallePedidoData);
         } else {
             // De lo contrario, agregamos un nuevo detalle de pedido
-            addDetallePedido(detallePedidoData);
+            if (idProducto) {
+                addDetallePedido(detallePedidoData);
+            } else {
+                console.error('No se ha seleccionado un producto');
+            }
         }
     });
 }
@@ -120,36 +126,38 @@ document.addEventListener('DOMContentLoaded', () => {
 // Agregar detalle de pedido
 
 function addDetallePedido(detallePedido) {
-    fetch(API_DETALLE_PEDIDOS, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            pedido: { id_pedido: detallePedido.pedido.id_pedido },
-            producto: { id_producto: detallePedido.producto.id_producto },
-            cantidad: detallePedido.cantidad,
-            subtotal: detallePedido.subtotal,
-            nota_detalle: detallePedido.nota_detalle,
-            fecha_detalle: detallePedido.fecha_detalle,
-            estado_detalle: detallePedido.estado_detalle,
-            descuento: detallePedido.descuento
-        }),
-    })
-        .then(response => {
-            if (!response.ok) {
-                return response.text().then(text => { throw new Error(text); });
-            }
-            return response.json();
+    if (detallePedido.producto && detallePedido.producto.id_producto) {
+        fetch(API_DETALLE_PEDIDOS, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                pedido: { id_pedido: detallePedido.pedido.id_pedido },
+                producto: { id_producto: detallePedido.producto.id_producto },
+                cantidad: detallePedido.cantidad,
+                subtotal: detallePedido.subtotal,
+                nota_detalle: detallePedido.nota_detalle,
+                fecha_detalle: detallePedido.fecha_detalle,
+                estado_detalle: detallePedido.estado_detalle,
+                descuento: detallePedido.descuento
+            }),
         })
-        .then(() => {
-            alert('Detalle de pedido agregado con éxito');
-            window.location.href = 'detalle-list.html';  // Redirige a la lista de detalles de pedidos
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error al agregar el detalle de pedido: ' + error.message);
-        });
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text); });
+                }
+                return response.json();
+            })
+            .then(() => {
+                alert('Detalle de pedido agregado con éxito');
+                window.location.href = 'detalle-list.html';  // Redirige a la lista de detalles de pedidos
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al agregar el detalle de pedido: ' + error.message);
+            });
+    }
 }
 
 // Actualizar detalle de pedido
@@ -210,29 +218,24 @@ window.deleteDetallePedido = function(id, button) {
     }
 };
 
-// Cargar los detalles de un pedido
+
+// Función para cargar los detalles de un pedido
 function cargarDetallePedido(id) {
     fetch(`${API_DETALLE_PEDIDOS}/${id}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error al obtener el detalle del pedido');
-            }
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
-            // Rellenar los campos del formulario con los detalles del pedido
-            document.getElementById('id_detalle').value = data.id_detalle; // Verifica que este ID existe
-            document.getElementById('id_pedido').value = data.pedido.id_pedido; // Verifica que este ID existe
-            document.getElementById('cantidad').value = data.cantidad; // Verifica que este ID existe
-            document.getElementById('subtotal').value = data.subtotal; // Verifica que este ID existe
-            document.getElementById('nota_detalle').value = data.nota_detalle || ''; // Verifica que este ID existe
-            document.getElementById('fecha_detalle').value = new Date(data.fecha_detalle).toISOString().split('T')[0]; // Verifica que este ID existe
-            document.getElementById('estado_detalle').value = data.estado_detalle; // Verifica que este ID existe
-            document.getElementById('descuento').value = data.descuento; // Verifica que este ID existe
+            document.getElementById('id_detalle').value = data.id_detalle;
+            document.getElementById('id_pedido').value = data.pedido.id_pedido;
+            document.getElementById('id_producto').value = data.producto.id_producto;
+            document.getElementById('cantidad').value = data.cantidad;
+            document.getElementById('subtotal').value = data.subtotal;
+            document.getElementById('nota_detalle').value = data.nota_detalle;
+            document.getElementById('fecha_detalle').value = data.fecha_detalle;
+            document.getElementById('estado_detalle').value = data.estado_detalle;
+            document.getElementById('descuento').value = data.descuento;
         })
-        .catch(error => console.error('Error al cargar el detalle del pedido:', error));
+        .catch(error => console.error('Error al cargar el detalle de pedido:', error));
 }
-
 function mostrarDetallesPedidos() {
     fetch(API_DETALLE_PEDIDOS)
         .then(response => {

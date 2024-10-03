@@ -306,6 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+
 // Inicialización de tooltips de Bootstrap
 var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
 if (tooltipTriggerList.length) { // Verifica si hay elementos para inicializar

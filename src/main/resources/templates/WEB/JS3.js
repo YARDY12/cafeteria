@@ -59,24 +59,24 @@ fetch(API_DETALLE_PEDIDOS)
             data.forEach(detallePedido => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-          <td>${detallePedido.id_detalle}</td>
-          <td>${detallePedido.pedido.id_pedido}</td>
-          
-          <td>${detallePedido.cantidad}</td>
-          <td>${detallePedido.subtotal}</td>
-          <td>${detallePedido.nota_detalle || 'N/A'}</td>
-          <td>${new Date(detallePedido.fecha_detalle).toLocaleDateString()}</td>
-          <td>${detallePedido.estado_detalle}</td>
-          <td>${detallePedido.descuento}</td>
-          <td>
-              <a href="detalle-form.html?id=${detallePedido.id_detalle}" class="btn btn-warning btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Detalle">
-                  <i class="bi bi-pencil-square"></i>
-              </a>
-              <button class="btn btn-danger btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar Detalle" onclick="deleteDetallePedido(${detallePedido.id_detalle}, this)">
-                  <i class="bi bi-trash"></i>
-              </button>
-          </td>
-        `;
+        <td>${detallePedido.id_detalle}</td>
+        <td>${detallePedido.pedido.id_pedido}</td>
+        <td>${detallePedido.producto.id_producto}</td>
+        <td>${detallePedido.cantidad}</td>
+        <td>${detallePedido.subtotal}</td>
+        <td>${detallePedido.nota_detalle || 'N/A'}</td>
+        <td>${new Date(detallePedido.fecha_detalle).toLocaleDateString()}</td>
+        <td>${detallePedido.estado_detalle}</td>
+        <td>${detallePedido.descuento}</td>
+        <td>
+            <a href="detalle-form.html?id=${detallePedido.id_detalle}" class="btn btn-warning btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Detalle">
+                <i class="bi bi-pencil-square"></i>
+            </a>
+            <button class="btn btn-danger btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar Detalle" onclick="deleteDetallePedido(${detallePedido.id_detalle}, this)">
+                <i class="bi bi-trash"></i>
+            </button>
+        </td>
+      `;
                 tableBody.appendChild(row);
             });
         } else {
@@ -125,7 +125,16 @@ function addDetallePedido(detallePedido) {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(detallePedido),
+        body: JSON.stringify({
+            pedido: { id_pedido: detallePedido.pedido.id_pedido },
+            producto: { id_producto: detallePedido.producto.id_producto },
+            cantidad: detallePedido.cantidad,
+            subtotal: detallePedido.subtotal,
+            nota_detalle: detallePedido.nota_detalle,
+            fecha_detalle: detallePedido.fecha_detalle,
+            estado_detalle: detallePedido.estado_detalle,
+            descuento: detallePedido.descuento
+        }),
     })
         .then(response => {
             if (!response.ok) {
@@ -148,7 +157,7 @@ function updateDetallePedido(id, detallePedido) {
     const updatedDetallePedido = {
         id_detalle: detallePedido.id_detalle,
         pedido: { id_pedido: detallePedido.pedido.id_pedido },
-
+        producto: { id_producto: detallePedido.producto.id_producto },
         cantidad: detallePedido.cantidad,
         subtotal: detallePedido.subtotal,
         nota_detalle: detallePedido.nota_detalle,
@@ -214,7 +223,6 @@ function cargarDetallePedido(id) {
             // Rellenar los campos del formulario con los detalles del pedido
             document.getElementById('id_detalle').value = data.id_detalle; // Verifica que este ID existe
             document.getElementById('id_pedido').value = data.pedido.id_pedido; // Verifica que este ID existe
-
             document.getElementById('cantidad').value = data.cantidad; // Verifica que este ID existe
             document.getElementById('subtotal').value = data.subtotal; // Verifica que este ID existe
             document.getElementById('nota_detalle').value = data.nota_detalle || ''; // Verifica que este ID existe
@@ -242,6 +250,7 @@ function mostrarDetallesPedidos() {
                     row.innerHTML = `
                       <td>${detallePedido.id_detalle}</td>
                       <td>${detallePedido.pedido.id_pedido}</td>
+                      <td>${detallePedido.producto.id_producto}</td>
                       <td>${detallePedido.cantidad}</td>
                       <td>${detallePedido.subtotal}</td>
                       <td>${detallePedido.nota_detalle}</td>

@@ -9,37 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cargarProducto(productId);
     }
 
-    // Manejar envío del formulario de productos
-    if (productForm) {
-        productForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const nombreProducto = document.getElementById('nombreProducto').value;
-            const descripcion = document.getElementById('descripcionProducto').value;
-            const precioProducto = parseFloat(document.getElementById('precioProducto').value);
-            const categoria = document.getElementById('categoriaProducto').value;
-            const stockActual = parseInt(document.getElementById('stockActual').value);
-            const unidadMedida = document.getElementById('unidadMedida').value;
-            const estadoProducto = document.getElementById('estadoProducto').value;
 
-            const productData = {
-                nombre_producto: nombreProducto,
-                descripcion: descripcion,
-                precio_unitario: precioProducto,
-                categoria: categoria,
-                stock_actual: stockActual,
-                unidad_medida: unidadMedida,
-                estado_producto: estadoProducto
-            };
-
-            if (productId) {
-                // Si existe un ID de producto, actualizamos el producto
-                updateProducto(productId, productData);
-            } else {
-                // De lo contrario, agregamos un nuevo producto
-                addProducto(productData);
-            }
-        });
-    }
 
     // Función para cargar los detalles de un producto
     function cargarProducto(id) {
@@ -92,6 +62,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Error:', error);
                 alert('Error al agregar el producto: ' + error.message);
             });
+    }
+
+// Manejar envío del formulario de productos
+    if (productForm) {
+        productForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const nombreProducto = document.getElementById('nombreProducto').value;
+            const descripcion = document.getElementById('descripcionProducto').value;
+            const precioProducto = parseFloat(document.getElementById('precioProducto').value);
+            const categoria = document.getElementById('categoriaProducto').value;
+            const stockActual = parseInt(document.getElementById('stockActual').value);
+            const unidadMedida = document.getElementById('unidadMedida').value;
+            const estadoProducto = document.getElementById('estadoProducto').value;
+
+            const productData = {
+                nombre_producto: nombreProducto,
+                descripcion: descripcion,
+                precio_unitario: precioProducto,
+                categoria: categoria,
+                stock_actual: stockActual,
+                unidad_medida: unidadMedida,
+                estado_producto: estadoProducto
+            };
+
+            if (productId) {
+                // Si existe un ID de producto, actualizamos el producto
+                updateProducto(productId, productData);
+            } else {
+                // De lo contrario, agregamos un nuevo producto
+                addProduct();
+            }
+        });
     }
 
 
@@ -192,8 +194,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 .catch(error => console.error('Error:', error));
         }
     }
-
-
     // Inicialización de tooltips de Bootstrap
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     if (tooltipTriggerList.length) { // Verifica si hay elementos para inicializar

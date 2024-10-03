@@ -17,9 +17,6 @@
 <br>
 <div class="container">
     <h2 class="mb-4">Lista de Detalles de Pedidos</h2>
-    <a href="detalle-pedido-form.html" class="btn btn-primary mb-3">
-        <i class="bi bi-plus-circle"></i> Agregar Nuevo Detalle de Pedido
-    </a>
 
     <table class="table table-bordered table-striped table-hover">
         <thead class="table-success">
@@ -33,10 +30,16 @@
             <th>Fecha Detalle</th>
             <th>Estado Detalle</th>
             <th>Descuento</th>
+            <th>Acciones</th> <!-- Columna de acciones -->
         </tr>
         </thead>
         <tbody id="detalle-pedido-table-body">
         <!-- Aquí se agregarán los detalles de pedidos -->
+        <td>
+            <a href="detalle-form.html?id=${detallePedido.id_detalle}" class="btn btn-warning btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Detalle">
+                <i class="bi bi-pencil-square"></i>
+            </a>
+        </td>
         </tbody>
     </table>
     <a href="index.html" class="btn btn-primary mb-3">

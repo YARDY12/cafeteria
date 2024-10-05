@@ -3,6 +3,7 @@ package com.example.cafeteriaspring.model;
 import jakarta.persistence.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "pedido")
@@ -34,7 +35,8 @@ public class Pedido {
     @Column(name = "nom_mesero", length = 100)
     private String nom_mesero;
 
-
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Detalle_Pedido> detalles;
 
     // Constructor vacío
     public Pedido() {}

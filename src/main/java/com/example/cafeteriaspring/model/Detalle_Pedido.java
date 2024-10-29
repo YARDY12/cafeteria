@@ -1,5 +1,6 @@
 package com.example.cafeteriaspring.model;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.util.Date;
 
 @Entity
@@ -12,17 +13,27 @@ public class Detalle_Pedido {
 
     @ManyToOne
     @JoinColumn(name = "id_pedido")
+    @NotNull(message = "El pedido no puede ser nulo.")
     private Pedido pedido;
 
     @ManyToOne
     @JoinColumn(name = "id_producto")
+    @NotNull(message = "El producto no puede ser nulo.")
     private Producto producto;
+    @NotNull(message = "La cantidad es requerida.")
+    @Min(value = 1, message = "La cantidad debe ser al menos 1.")
     private int cantidad;
+    @NotNull(message = "El subtotal es requerido.")
+    @DecimalMin(value = "0.0", inclusive = false, message = "El subtotal debe ser mayor que 0.")
     private double subtotal;
+    @Size(max = 255, message = "La nota del detalle no puede exceder los 255 caracteres.")
     private String nota_detalle;
     @Temporal(TemporalType.DATE)
+    @NotNull(message = "La fecha del detalle es requerida.")
     private Date fecha_detalle;
+
     private String estado_detalle;
+
     private double descuento;
 
 

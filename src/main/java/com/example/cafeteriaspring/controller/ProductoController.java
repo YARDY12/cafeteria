@@ -3,67 +3,56 @@ package com.example.cafeteriaspring.controller;
 import com.example.cafeteriaspring.model.Producto;
 import com.example.cafeteriaspring.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController // Cambiado de @RestController a @Controller para manejar vistas Thymeleaf
-@RequestMapping("/api/products") // Cambiado el mapeo para el controlador de producto
+@RestController
+@RequestMapping("/api/productos")
 public class ProductoController {
 
     @Autowired
     private ProductoService productoService;
 
+    // Obtener la lista de productos
     @GetMapping
-    @ResponseBody
-    public ResponseEntity<List<Producto>> listaDeProductos() {
-        List<Producto> listaProductos = productoService.obtenerTodosLosProductos();
-        return ResponseEntity.ok(listaProductos);
+    public List<Producto> getAllProductos() {
+        return productoService.getAllProductos();
     }
 
-    @PostMapping
-    @ResponseBody
-    public ResponseEntity<Producto> addProduct(@RequestBody Producto producto) {
-        try {
-            Producto newProduct = productoService.addProduct(producto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(newProduct);
-        } catch (Exception e) {
-            // Log del error para diagnóstico
-            System.out.println("Error al agregar el producto: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
-    }
-
+    // Obtener un producto por su id
     @GetMapping("/{id}")
-    @ResponseBody
-    public ResponseEntity<Producto> getProductById(@PathVariable int id) {
-        Producto producto = productoService.getProductById(id);
+    public ResponseEntity<Producto> getProductoById(@PathVariable int id) {
+        Producto producto = productoService.getProductoById(id);
         if (producto != null) {
             return ResponseEntity.ok(producto);
         }
         return ResponseEntity.notFound().build();
     }
 
-    @PutMapping("/{id}")
-    @ResponseBody
-    public ResponseEntity<Producto> updateProduct(@PathVariable int id, @RequestBody Producto producto) {
-        Producto updatedProduct = productoService.updateProduct(id, producto);
-        if (updatedProduct != null) {
-            return ResponseEntity.ok(updatedProduct); // Retorna el producto actualizado
-        }
-        return ResponseEntity.notFound().build(); // Retorna 404 si no se encuentra
+    // Registrar un nuevo producto
+    @PostMapping
+    public Producto addProducto(@RequestBody Producto producto) {
+        return productoService.addProducto(producto);
     }
 
-    //Eliminar un producto por su id
+    // Actualizar un producto por su ID
+    @PutMapping("/{id}")
+    public ResponseEntity<Producto> updateProducto(@PathVariable int id, @RequestBody Producto producto) {
+        Producto updatedProducto = productoService.updateProducto(id, producto);
+        if (updatedProducto != null) {
+            return ResponseEntity.ok(updatedProducto);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    // Eliminar un producto
     @DeleteMapping("/{id}")
-    @ResponseBody
-    public ResponseEntity<Void> deleteProduct(@PathVariable int id){
-        productoService.deleteProduct(id);
+    public ResponseEntity<Void> deleteProducto(@PathVariable int id) {
+        productoService.deleteProducto(id);
         return ResponseEntity.noContent().build();
     }
 }
-
 
 

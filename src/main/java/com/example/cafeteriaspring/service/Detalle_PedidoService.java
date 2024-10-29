@@ -1,50 +1,73 @@
 package com.example.cafeteriaspring.service;
 
 import com.example.cafeteriaspring.model.Detalle_Pedido;
+import com.example.cafeteriaspring.model.Pedido;
+import com.example.cafeteriaspring.model.Producto;
 import com.example.cafeteriaspring.repository.Detalle_PedidoRepository;
+import com.example.cafeteriaspring.repository.PedidoRepository;
+import com.example.cafeteriaspring.repository.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class Detalle_PedidoService {
 
-    @Autowired
-    private Detalle_PedidoRepository detallePedidoRepository;
+    private final Detalle_PedidoRepository detallePedidoRepository;
+    private final PedidoRepository pedidoRepository;
+    private final ProductoRepository productoRepository;
 
-    // Get all order details
-    public List<Detalle_Pedido> getAllOrderDetails() {
+    @Autowired
+    public Detalle_PedidoService(Detalle_PedidoRepository detallePedidoRepository, PedidoRepository pedidoRepository, ProductoRepository productoRepository) {
+        this.detallePedidoRepository = detallePedidoRepository;
+        this.pedidoRepository = pedidoRepository;
+        this.productoRepository = productoRepository;
+    }
+
+    public List<Detalle_Pedido> getAllDetallePedidos() {
         return detallePedidoRepository.findAll();
     }
 
-    // Get order detail by ID
-    public Detalle_Pedido getOrderDetailById(int id) {
-        return detallePedidoRepository.findById(id).orElse(null);
+    public Optional<Detalle_Pedido> getDetallePedidoById(int id) {
+        return detallePedidoRepository.findById(id);
     }
 
-    // Add new order detail
-    public Detalle_Pedido addOrderDetail(Detalle_Pedido orderDetail) {
-        return detallePedidoRepository.save(orderDetail);
+    public Detalle_Pedido addDetallePedido(Detalle_Pedido detallePedido) {
+        Pedido pedido = pedidoRepository.findById(detallePedido.getPedido().getId_pedido())
+                .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
+        Producto producto = productoRepository.findById(detallePedido.getProducto().getId_producto())
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+        detallePedido.setPedido(pedido);
+        detallePedido.setProducto(producto);
+        return detallePedidoRepository.save(detallePedido);
     }
 
-    // Update order detail by ID
-    public Detalle_Pedido updateOrderDetail(int id, Detalle_Pedido orderDetail) {
-        Detalle_Pedido existingOrderDetail = detallePedidoRepository.findById(id).orElse(null);
-        if (existingOrderDetail != null) {
-            existingOrderDetail.setCantidad(orderDetail.getCantidad());
-            existingOrderDetail.setSubtotal(orderDetail.getSubtotal());
-            existingOrderDetail.setNota_detalle(orderDetail.getNota_detalle());
-            existingOrderDetail.setFecha_detalle(orderDetail.getFecha_detalle());
-            existingOrderDetail.setEstado_detalle(orderDetail.getEstado_detalle());
-            existingOrderDetail.setDescuento(orderDetail.getDescuento());
-            return detallePedidoRepository.save(existingOrderDetail);
-        }
-        return null;
+    public Detalle_Pedido updateDetallePedido(int id, Detalle_Pedido detallePedidoDetails) {
+        Detalle_Pedido detallePedido = detallePedidoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Detalle de Pedido no encontrado"));
+        Pedido pedido = pedidoRepository.findById(detallePedidoDetails.getPedido().getId_pedido())
+                .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
+        Producto producto = productoRepository.findById(detallePedidoDetails.getProducto().getId_producto())
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+        detallePedido.setCantidad(detallePedidoDetails.getCantidad());
+        detallePedido.setSubtotal(detallePedidoDetails.getSubtotal());
+        detallePedido.setNota_detalle(detallePedidoDetails.getNota_detalle());
+        detallePedido.setFecha_detalle(detallePedidoDetails.getFecha_detalle());
+        detallePedido.setEstado_detalle(detallePedidoDetails.getEstado_detalle());
+        detallePedido.setDescuento(detallePedidoDetails.getDescuento());
+        detallePedido.setPedido(pedido);
+        detallePedido.setProducto(producto);
+
+        return detallePedidoRepository.save(detallePedido);
     }
 
-    // Delete order detail by ID
-    public void deleteOrderDetail(int id) {
-        detallePedidoRepository.deleteById(id);
+    public void deleteDetallePedido(int id) {
+        Detalle_Pedido detallePedido = detallePedidoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Detalle de Pedido no encontrado"));
+        detallePedidoRepository.delete(detallePedido);
     }
 }

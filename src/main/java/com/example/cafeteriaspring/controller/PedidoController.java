@@ -8,60 +8,48 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/pedidos")
 public class PedidoController {
 
-    @Autowired
-    private PedidoService pedidoService;
+    private final PedidoService pedidoService;
 
-    @GetMapping
-    @ResponseBody
-    public ResponseEntity<List<Pedido>> listaDePedidos() {
-        List<Pedido> listaPedidos = pedidoService.getAllOrders();
-        return ResponseEntity.ok(listaPedidos);
+    @Autowired
+    public PedidoController(PedidoService pedidoService) {
+        this.pedidoService = pedidoService;
     }
 
-    @PostMapping
-    @ResponseBody
-    public ResponseEntity<Pedido> addOrder(@RequestBody Pedido pedido) {
-        try {
-            Pedido newOrder = pedidoService.addOrder(pedido);
-            return ResponseEntity.status(HttpStatus.CREATED).body(newOrder);
-        } catch (Exception e) {
-            // Log del error para diagnóstico
-            System.out.println("Error al agregar el pedido: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+    @GetMapping
+    public ResponseEntity<List<Pedido>> getAllPedidos() {
+        List<Pedido> pedidos = pedidoService.getAllPedidos();
+        return ResponseEntity.ok(pedidos);
     }
 
     @GetMapping("/{id}")
-    @ResponseBody
-    public ResponseEntity<Pedido> getOrderById(@PathVariable int id) {
-        Pedido pedido = pedidoService.getOrderById(id);
-        if (pedido != null) {
-            return ResponseEntity.ok(pedido);
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<Pedido> getPedidoById(@PathVariable int id) {
+        Optional<Pedido> pedido = pedidoService.getPedidoById(id);
+        return pedido.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public ResponseEntity<Pedido> addPedido(@RequestBody Pedido pedido) {
+        Pedido newPedido = pedidoService.addPedido(pedido);
+        return ResponseEntity.ok(newPedido);
     }
 
     @PutMapping("/{id}")
-    @ResponseBody
-    public ResponseEntity<Pedido> updateOrder(@PathVariable int id, @RequestBody Pedido pedido) {
-        Pedido updatedOrder = pedidoService.updateOrder(id, pedido);
-        if (updatedOrder != null) {
-            return ResponseEntity.ok(updatedOrder); // Retorna el pedido actualizado
-        }
-        return ResponseEntity.notFound().build(); // Retorna 404 si no se encuentra
+    public ResponseEntity<Pedido> updatePedido(@PathVariable int id, @RequestBody Pedido pedidoDetails) {
+        Pedido updatedPedido = pedidoService.updatePedido(id, pedidoDetails);
+        return ResponseEntity.ok(updatedPedido);
     }
 
-    //Eliminar un pedido por su id
     @DeleteMapping("/{id}")
-    @ResponseBody
-    public ResponseEntity<Void> deleteOrder(@PathVariable int id){
-        pedidoService.deleteOrder(id);
+    public ResponseEntity<Void> deletePedido(@PathVariable int id) {
+        pedidoService.deletePedido(id);
         return ResponseEntity.noContent().build();
     }
 }
+
 

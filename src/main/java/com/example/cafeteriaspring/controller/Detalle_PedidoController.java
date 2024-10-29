@@ -8,60 +8,57 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/detalle-pedidos")
 public class Detalle_PedidoController {
 
-    @Autowired
-    private Detalle_PedidoService detallePedidoService;
+    private final Detalle_PedidoService detallePedidoService;
 
-    @GetMapping
-    @ResponseBody
-    public ResponseEntity<List<Detalle_Pedido>> listaDeDetalles() {
-        List<Detalle_Pedido> listaDetalles = detallePedidoService.getAllOrderDetails();
-        return ResponseEntity.ok(listaDetalles);
+    @Autowired
+    public Detalle_PedidoController(Detalle_PedidoService detallePedidoService) {
+        this.detallePedidoService = detallePedidoService;
     }
 
-    @PostMapping
-    @ResponseBody
-    public ResponseEntity<Detalle_Pedido> addOrderDetail(@RequestBody Detalle_Pedido detallePedido) {
-        try {
-            Detalle_Pedido newOrderDetail = detallePedidoService.addOrderDetail(detallePedido);
-            return ResponseEntity.status(HttpStatus.CREATED).body(newOrderDetail);
-        } catch (Exception e) {
-            // Log del error para diagnóstico
-            System.out.println("Error al agregar el detalle de pedido: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+    @GetMapping
+    public ResponseEntity<List<Detalle_Pedido>> getAllDetallePedidos() {
+        List<Detalle_Pedido> detallePedidos = detallePedidoService.getAllDetallePedidos();
+        return ResponseEntity.ok(detallePedidos);
     }
 
     @GetMapping("/{id}")
-    @ResponseBody
-    public ResponseEntity<Detalle_Pedido> getOrderDetailById(@PathVariable int id) {
-        Detalle_Pedido detallePedido = detallePedidoService.getOrderDetailById(id);
-        if (detallePedido != null) {
-            return ResponseEntity.ok(detallePedido);
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<Detalle_Pedido> getDetallePedidoById(@PathVariable int id) {
+        Optional<Detalle_Pedido> detallePedido = detallePedidoService.getDetallePedidoById(id);
+        return detallePedido.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public ResponseEntity<Detalle_Pedido> addDetallePedido(@RequestBody Detalle_Pedido detallePedido) {
+        Detalle_Pedido newDetallePedido = detallePedidoService.addDetallePedido(detallePedido);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newDetallePedido);
     }
 
     @PutMapping("/{id}")
-    @ResponseBody
-    public ResponseEntity<Detalle_Pedido> updateOrderDetail(@PathVariable int id, @RequestBody Detalle_Pedido detallePedido) {
-        Detalle_Pedido updatedOrderDetail = detallePedidoService.updateOrderDetail(id, detallePedido);
-        if (updatedOrderDetail != null) {
-            return ResponseEntity.ok(updatedOrderDetail); // Retorna el detalle de pedido actualizado
+    public ResponseEntity<Detalle_Pedido> updateDetallePedido(@PathVariable int id, @RequestBody Detalle_Pedido detallePedidoDetails) {
+        try {
+            Detalle_Pedido updatedDetallePedido = detallePedidoService.updateDetallePedido(id, detallePedidoDetails);
+            return ResponseEntity.ok(updatedDetallePedido);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build(); // Retorna 404 si no se encuentra
     }
 
-    //Eliminar un detalle de pedido por su id
     @DeleteMapping("/{id}")
-    @ResponseBody
-    public ResponseEntity<Void> deleteOrderDetail(@PathVariable int id){
-        detallePedidoService.deleteOrderDetail(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Void> deleteDetallePedido(@PathVariable int id) {
+        try {
+            detallePedidoService.deleteDetallePedido(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
+
+
 

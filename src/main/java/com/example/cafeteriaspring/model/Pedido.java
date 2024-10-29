@@ -1,9 +1,11 @@
 package com.example.cafeteriaspring.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "pedido")
@@ -12,48 +14,40 @@ public class Pedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id_pedido;
 
-    private int num_mesa;
+    @ManyToOne
+    @JoinColumn(name="id_empleado")
+    @NotNull(message = "El empleado es requerido")
+    private Empleado empleado;
 
-    @Column(name = "nom_cliente", nullable = false, length = 100)
+    @ManyToOne
+    @JoinColumn(name="id_producto")
+    @NotNull(message = "El producto es requerido")
+    private Producto producto;
+    @NotNull(message = "El número de mesa es requerido")
+    @Positive(message = "El número de mesa debe ser un número positivo")
+    private int num_mesa;
+    @NotBlank(message = "El nombre del cliente es requerido")
     private String nom_cliente;
 
-    @Temporal(TemporalType.DATE)
-    private Date fecha;
-
-    @Column(name = "metodo_pago", nullable = false, length = 50)
-    private String metodo_pago;
-
-    @Column(name = "estado", nullable = false, length = 50)
-    private String estado;
-
-    @Column(name = "total", nullable = false)
+    private String nota_especial;
+    @NotNull(message = "El total es requerido")
+    @Positive(message = "El total debe ser un número positivo")
     private double total;
 
-    @Column(name = "nota_especial")
-    private String nota_especial;
 
-    @Column(name = "nom_mesero", length = 100)
-    private String nom_mesero;
-
-    @OneToMany(mappedBy = "pedido", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Detalle_Pedido> detalles;
-
-    // Constructor vacío
-    public Pedido() {}
-
-    // Constructor con todos los parámetros
-    public Pedido(int num_mesa, String nom_cliente, Date fecha, String metodo_pago, String estado, double total, String nota_especial, String nom_mesero) {
-        this.num_mesa = num_mesa;
-        this.nom_cliente = nom_cliente;
-        this.fecha = fecha;
-        this.metodo_pago = metodo_pago;
-        this.estado = estado;
-        this.total = total;
-        this.nota_especial = nota_especial;
-        this.nom_mesero = nom_mesero;
+    public Pedido() {
     }
 
-    // Getters y Setters
+
+    public Pedido(int id_pedido, Empleado empleado, Producto producto, int num_mesa, String nom_cliente, String nota_especial, double total) {
+        this.id_pedido = id_pedido;
+        this.empleado = empleado;
+        this.producto = producto;
+        this.num_mesa = num_mesa;
+        this.nom_cliente = nom_cliente;
+        this.nota_especial = nota_especial;
+        this.total = total;
+    }
 
 
     public int getId_pedido() {
@@ -62,6 +56,22 @@ public class Pedido {
 
     public void setId_pedido(int id_pedido) {
         this.id_pedido = id_pedido;
+    }
+
+    public Empleado getEmpleado() {
+        return empleado;
+    }
+
+    public void setEmpleado(Empleado empleado) {
+        this.empleado = empleado;
+    }
+
+    public Producto getProducto() {
+        return producto;
+    }
+
+    public void setProducto(Producto producto) {
+        this.producto = producto;
     }
 
     public int getNum_mesa() {
@@ -80,38 +90,6 @@ public class Pedido {
         this.nom_cliente = nom_cliente;
     }
 
-    public Date getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(Date fecha) {
-        this.fecha = fecha;
-    }
-
-    public String getMetodo_pago() {
-        return metodo_pago;
-    }
-
-    public void setMetodo_pago(String metodo_pago) {
-        this.metodo_pago = metodo_pago;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
-    public double getTotal() {
-        return total;
-    }
-
-    public void setTotal(double total) {
-        this.total = total;
-    }
-
     public String getNota_especial() {
         return nota_especial;
     }
@@ -120,11 +98,11 @@ public class Pedido {
         this.nota_especial = nota_especial;
     }
 
-    public String getNom_mesero() {
-        return nom_mesero;
+    public double getTotal() {
+        return total;
     }
 
-    public void setNom_mesero(String nom_mesero) {
-        this.nom_mesero = nom_mesero;
+    public void setTotal(double total) {
+        this.total = total;
     }
 }

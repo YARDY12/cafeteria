@@ -13,38 +13,40 @@ public class ProductoService {
     @Autowired
     private ProductoRepository productoRepository;
 
-    public List<Producto> obtenerTodosLosProductos() {
+
+    // Método para obtener todos los productos
+    public List<Producto> getAllProductos() {
         return productoRepository.findAll();
     }
 
-    // Get product by ID
-    public Producto getProductById(int id) {
+    // Método para obtener un producto por su ID
+    public Producto getProductoById(int id) {
         return productoRepository.findById(id).orElse(null);
     }
 
-    // Add new product
-    public Producto addProduct(Producto product) {
-        return productoRepository.save(product);
+    // Método para agregar un nuevo producto
+    public Producto addProducto(Producto producto) {
+        return productoRepository.save(producto);
     }
 
-    // Update product by ID
-    public Producto updateProduct(int id, Producto product) {
-        Producto existingProduct = productoRepository.findById(id).orElse(null);
-        if (existingProduct != null) {
-            existingProduct.setNombre_producto(product.getNombre_producto());
-            existingProduct.setDescripcion(product.getDescripcion());
-            existingProduct.setPrecio_unitario(product.getPrecio_unitario());
-            existingProduct.setCategoria(product.getCategoria());
-            existingProduct.setStock_actual(product.getStock_actual());
-            existingProduct.setUnidad_medida(product.getUnidad_medida());
-            existingProduct.setEstado_producto(product.getEstado_producto());
-            return productoRepository.save(existingProduct);
+    // Método para actualizar un producto existente
+    public Producto updateProducto(int id, Producto productoDetails) {
+        Producto producto = productoRepository.findById(id).orElse(null);
+        if (producto != null) {
+            producto.setNombre(productoDetails.getNombre());
+            producto.setDescripcion(productoDetails.getDescripcion());
+            producto.setPrecio(productoDetails.getPrecio());
+            producto.setCategoria(productoDetails.getCategoria());
+            producto.setEstado_producto(productoDetails.getEstado_producto());
+            producto.setTamaño(productoDetails.getTamaño());
+            producto.setAlergenos(productoDetails.getAlergenos());
+            return productoRepository.save(producto);
         }
         return null;
     }
 
-    // Delete product by ID
-    public void deleteProduct(int id) {
+    // Método para eliminar un producto
+    public void deleteProducto(int id) {
         productoRepository.deleteById(id);
     }
 

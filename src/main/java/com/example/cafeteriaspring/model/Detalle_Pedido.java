@@ -11,32 +11,18 @@ public class Detalle_Pedido {
     private int id_detalle;
 
     @ManyToOne
-    @JoinColumn(name = "id_pedido", nullable = false)
+    @JoinColumn(name = "id_pedido")
     private Pedido pedido;
 
     @ManyToOne
-    @JoinColumn(name = "id_producto", nullable = false)
+    @JoinColumn(name = "id_producto")
     private Producto producto;
-
-    
-    @Column(name = "cantidad", nullable = false)
     private int cantidad;
-
-
-    @Column(name = "subtotal", nullable = false)
     private double subtotal;
-
-    @Column(name = "nota_detalle")
     private String nota_detalle;
-
     @Temporal(TemporalType.DATE)
-    @Column(name = "fecha_detalle", nullable = false)
     private Date fecha_detalle;
-
-    @Column(name = "estado_detalle", nullable = false, length = 50)
     private String estado_detalle;
-
-    @Column(name = "descuento")
     private double descuento;
 
 

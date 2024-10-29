@@ -1,8 +1,13 @@
 package com.example.cafeteriaspring.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+
 import java.util.Date;
-import java.util.List;
+
 
 @Entity
 @Table(name = "producto")
@@ -11,53 +16,40 @@ public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id_producto;
-
-    @Column(name = "nombre_producto", nullable = false, length = 100)
-    private String nombre_producto;
-
-    @Column(name = "descripcion", length = 255)
+    @NotBlank(message = "El nombre del producto es requerido")
+    @Size(min = 2, max = 100, message = "El nombre del producto debe tener entre 2 y 100 caracteres")
+    private String nombre;
+    @NotBlank(message = "La descripción es requerida")
+    @Size(max = 500, message = "La descripción no puede exceder los 500 caracteres")
     private String descripcion;
-
-    @Column(name = "precio_unitario", nullable = false)
-    private double precio_unitario;
-
-    @Column(name = "categoria", nullable = false, length = 50)
+    @NotNull(message = "El precio es requerido")
+    @Positive(message = "El precio debe ser un número positivo")
+    private double precio;
+    @NotBlank(message = "La categoría es requerida")
     private String categoria;
-
-    @Column(name = "stock_actual", nullable = false)
-    private int stock_actual;
-
-    @Column(name = "unidad_medida", nullable = false, length = 50)
-    private String unidad_medida;
-
-    @Temporal(TemporalType.DATE)
-    @Column(name = "fecha_registro", nullable = false)
-    private Date fecha_registro;
-
-    @Column(name = "estado_producto", nullable = false, length = 50)
+    @NotBlank(message = "El estado del producto es requerido")
     private String estado_producto;
+    @NotBlank(message = "El tamaño es requerido")
+    private String tamaño;
+    @NotNull(message = "La fecha de registro es requerida")
+    @Column(name = "fecha_registro")
+    private Date fecha_registro;
+    private String alergenos;
 
-    @OneToMany(mappedBy = "producto", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Detalle_Pedido> detalles;
-
-    // Constructor vacío
-    public Producto() {}
-
-    // Constructor con todos los parámetros
-    public Producto(String nombre_producto, String descripcion, double precio_unitario, String categoria,
-                    int stock_actual, String unidad_medida, Date fecha_registro, String estado_producto) {
-        this.nombre_producto = nombre_producto;
-        this.descripcion = descripcion;
-        this.precio_unitario = precio_unitario;
-        this.categoria = categoria;
-        this.stock_actual = stock_actual;
-        this.unidad_medida = unidad_medida;
-        this.fecha_registro = fecha_registro;
-        this.estado_producto = estado_producto;
+    public Producto() {
     }
 
-    // Getters y Setters
-
+    public Producto(int id_producto, String nombre, String descripcion, double precio, String categoria, String estado_producto, String tamaño, Date fecha_registro, String alergenos) {
+        this.id_producto = id_producto;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.precio = precio;
+        this.categoria = categoria;
+        this.estado_producto = estado_producto;
+        this.tamaño = tamaño;
+        this.fecha_registro = fecha_registro;
+        this.alergenos = alergenos;
+    }
 
     public int getId_producto() {
         return id_producto;
@@ -67,12 +59,12 @@ public class Producto {
         this.id_producto = id_producto;
     }
 
-    public String getNombre_producto() {
-        return nombre_producto;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setNombre_producto(String nombre_producto) {
-        this.nombre_producto = nombre_producto;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     public String getDescripcion() {
@@ -83,12 +75,12 @@ public class Producto {
         this.descripcion = descripcion;
     }
 
-    public double getPrecio_unitario() {
-        return precio_unitario;
+    public double getPrecio() {
+        return precio;
     }
 
-    public void setPrecio_unitario(double precio_unitario) {
-        this.precio_unitario = precio_unitario;
+    public void setPrecio(double precio) {
+        this.precio = precio;
     }
 
     public String getCategoria() {
@@ -99,20 +91,20 @@ public class Producto {
         this.categoria = categoria;
     }
 
-    public int getStock_actual() {
-        return stock_actual;
+    public String getEstado_producto() {
+        return estado_producto;
     }
 
-    public void setStock_actual(int stock_actual) {
-        this.stock_actual = stock_actual;
+    public void setEstado_producto(String estado_producto) {
+        this.estado_producto = estado_producto;
     }
 
-    public String getUnidad_medida() {
-        return unidad_medida;
+    public String getTamaño() {
+        return tamaño;
     }
 
-    public void setUnidad_medida(String unidad_medida) {
-        this.unidad_medida = unidad_medida;
+    public void setTamaño(String tamaño) {
+        this.tamaño = tamaño;
     }
 
     public Date getFecha_registro() {
@@ -123,11 +115,11 @@ public class Producto {
         this.fecha_registro = fecha_registro;
     }
 
-    public String getEstado_producto() {
-        return estado_producto;
+    public String getAlergenos() {
+        return alergenos;
     }
 
-    public void setEstado_producto(String estado_producto) {
-        this.estado_producto = estado_producto;
+    public void setAlergenos(String alergenos) {
+        this.alergenos = alergenos;
     }
 }

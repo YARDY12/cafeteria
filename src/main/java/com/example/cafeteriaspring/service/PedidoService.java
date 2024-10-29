@@ -1,53 +1,73 @@
 package com.example.cafeteriaspring.service;
 
+import com.example.cafeteriaspring.model.Empleado;
 import com.example.cafeteriaspring.model.Pedido;
+import com.example.cafeteriaspring.model.Producto;
+import com.example.cafeteriaspring.repository.EmpleadoRepository;
 import com.example.cafeteriaspring.repository.PedidoRepository;
+import com.example.cafeteriaspring.repository.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
 
 @Service
 public class PedidoService {
 
-    @Autowired
-    private PedidoRepository pedidoRepository;
+    private final PedidoRepository pedidoRepository;
+    private final EmpleadoRepository empleadoRepository;
+    private final ProductoRepository productoRepository;
 
-    // Get all orders
-    public List<Pedido> getAllOrders() {
+    @Autowired
+    public PedidoService(PedidoRepository pedidoRepository, EmpleadoRepository empleadoRepository, ProductoRepository productoRepository) {
+        this.pedidoRepository = pedidoRepository;
+        this.empleadoRepository = empleadoRepository;
+        this.productoRepository = productoRepository;
+    }
+
+    public List<Pedido> getAllPedidos() {
         return pedidoRepository.findAll();
     }
 
-    // Get order by ID
-    public Pedido getOrderById(int id) {
-        return pedidoRepository.findById(id).orElse(null);
+    public Optional<Pedido> getPedidoById(int id) {
+        return pedidoRepository.findById(id);
     }
 
-    // Add new order
-    public Pedido addOrder(Pedido order) {
-        return pedidoRepository.save(order);
+    public Pedido addPedido(Pedido pedido) {
+        Empleado empleado = empleadoRepository.findById(pedido.getEmpleado().getId_empleado())
+                .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
+        Producto producto = productoRepository.findById(pedido.getProducto().getId_producto())
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+        pedido.setEmpleado(empleado);
+        pedido.setProducto(producto);
+        return pedidoRepository.save(pedido);
     }
 
-    // Update order by ID
-    public Pedido updateOrder(int id, Pedido order) {
-        Pedido existingOrder = pedidoRepository.findById(id).orElse(null);
-        if (existingOrder != null) {
-            existingOrder.setNum_mesa(order.getNum_mesa());
-            existingOrder.setNom_cliente(order.getNom_cliente());
-            existingOrder.setFecha(order.getFecha());
-            existingOrder.setMetodo_pago(order.getMetodo_pago());
-            existingOrder.setEstado(order.getEstado());
-            existingOrder.setTotal(order.getTotal());
-            existingOrder.setNota_especial(order.getNota_especial());
-            existingOrder.setNom_mesero(order.getNom_mesero());
-            return pedidoRepository.save(existingOrder);
-        }
-        return null;
+    public Pedido updatePedido(int id, Pedido pedidoDetails) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
+        Empleado empleado = empleadoRepository.findById(pedidoDetails.getEmpleado().getId_empleado())
+                .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
+        Producto producto = productoRepository.findById(pedidoDetails.getProducto().getId_producto())
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+        pedido.setNum_mesa(pedidoDetails.getNum_mesa());
+        pedido.setNom_cliente(pedidoDetails.getNom_cliente());
+        pedido.setNota_especial(pedidoDetails.getNota_especial());
+        pedido.setTotal(pedidoDetails.getTotal());
+        pedido.setEmpleado(empleado);
+        pedido.setProducto(producto);
+
+        return pedidoRepository.save(pedido);
     }
 
-    // Delete order by ID
-    public void deleteOrder(int id) {
-        pedidoRepository.deleteById(id);
+    public void deletePedido(int id) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
+        pedidoRepository.delete(pedido);
     }
 
 }

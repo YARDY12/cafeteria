@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,31 +35,20 @@ public class Detalle_PedidoController {
     }
 
     @PostMapping
-    public ResponseEntity<Detalle_Pedido> addDetallePedido(@RequestBody Detalle_Pedido detallePedido) {
+    public ResponseEntity<Detalle_Pedido> addDetallePedido(@Valid @RequestBody Detalle_Pedido detallePedido) {
         Detalle_Pedido newDetallePedido = detallePedidoService.addDetallePedido(detallePedido);
         return ResponseEntity.status(HttpStatus.CREATED).body(newDetallePedido);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Detalle_Pedido> updateDetallePedido(@PathVariable int id, @RequestBody Detalle_Pedido detallePedidoDetails) {
-        try {
-            Detalle_Pedido updatedDetallePedido = detallePedidoService.updateDetallePedido(id, detallePedidoDetails);
-            return ResponseEntity.ok(updatedDetallePedido);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Detalle_Pedido> updateDetallePedido(@PathVariable int id, @Valid @RequestBody Detalle_Pedido detallePedidoDetails) {
+        Detalle_Pedido updatedDetallePedido = detallePedidoService.updateDetallePedido(id, detallePedidoDetails);
+        return ResponseEntity.ok(updatedDetallePedido);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDetallePedido(@PathVariable int id) {
-        try {
-            detallePedidoService.deleteDetallePedido(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Void > deleteDetallePedido(@PathVariable int id) {
+        detallePedidoService.deleteDetallePedido(id);
+        return ResponseEntity.noContent().build();
     }
 }
-
-
-

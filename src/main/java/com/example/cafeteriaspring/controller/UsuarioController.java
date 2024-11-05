@@ -1,10 +1,13 @@
 package com.example.cafeteriaspring.controller;
+
 import com.example.cafeteriaspring.model.Usuario;
 import com.example.cafeteriaspring.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -14,13 +17,11 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    // Obtener la lista de usuarios
     @GetMapping
     public List<Usuario> getAllUsuarios() {
         return usuarioService.getAllUsuarios();
     }
 
-    // Obtener un usuario por su ID
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> getUsuarioById(@PathVariable int id) {
         Usuario usuario = usuarioService.getUsuarioById(id);
@@ -30,15 +31,14 @@ public class UsuarioController {
         return ResponseEntity.notFound().build();
     }
 
-    // Registrar un nuevo usuario
     @PostMapping
-    public Usuario addUsuario(@RequestBody Usuario usuario) {
-        return usuarioService.addUsuario(usuario);
+    public ResponseEntity<Usuario> addUsuario(@Valid @RequestBody Usuario usuario) {
+        Usuario nuevoUsuario = usuarioService.addUsuario(usuario);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
     }
 
-    // Actualizar un usuario por su ID
     @PutMapping("/{id}")
-    public ResponseEntity<Usuario> updateUsuario(@PathVariable int id, @RequestBody Usuario usuario) {
+    public ResponseEntity<Usuario> updateUsuario(@PathVariable int id, @Valid @RequestBody Usuario usuario) {
         Usuario updatedUsuario = usuarioService.updateUsuario(id, usuario);
         if (updatedUsuario != null) {
             return ResponseEntity.ok(updatedUsuario);
@@ -46,11 +46,9 @@ public class UsuarioController {
         return ResponseEntity.notFound().build();
     }
 
-    // Eliminar un usuario
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUsuario(@PathVariable int id) {
         usuarioService.deleteUsuario(id);
         return ResponseEntity.noContent().build();
     }
-
 }

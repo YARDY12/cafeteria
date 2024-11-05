@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,13 +35,13 @@ public class PedidoController {
     }
 
     @PostMapping
-    public ResponseEntity<Pedido> addPedido(@RequestBody Pedido pedido) {
+    public ResponseEntity<Pedido> addPedido(@Valid @RequestBody Pedido pedido) {
         Pedido newPedido = pedidoService.addPedido(pedido);
-        return ResponseEntity.ok(newPedido);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newPedido);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Pedido> updatePedido(@PathVariable int id, @RequestBody Pedido pedidoDetails) {
+    public ResponseEntity<Pedido> updatePedido(@PathVariable int id, @Valid @RequestBody Pedido pedidoDetails) {
         Pedido updatedPedido = pedidoService.updatePedido(id, pedidoDetails);
         return ResponseEntity.ok(updatedPedido);
     }
@@ -51,5 +52,3 @@ public class PedidoController {
         return ResponseEntity.noContent().build();
     }
 }
-
-

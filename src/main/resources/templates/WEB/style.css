@@ -1,147 +1,43 @@
-/* Estilos generales */
+/* Fondo general de la página */
 body {
-    background-color: #f7f7f7;
+    background-color: rgba(193, 163, 98, 0.4);
 }
 
-.header {
-    display: flex; /* Activa Flexbox */
-    align-items: center; /* Alinea verticalmente al centro */
-    justify-content: center; /* Alinea horizontalmente al centro */
-}
-
-.text-content {
-    margin-right: 10px; /* Espacio entre el texto y la imagen */
-}
-
+/* Encabezado principal */
 h1 {
-    margin-bottom: 10px; /* Espacio debajo del encabezado */
-}
-
-.mi-imagen {
-    max-width: 12%;
-    height: auto; /* Mantiene la proporción de la imagen */
-    margin-left: 40px; /* Mueve la imagen más a la derecha */
-}
-
-
-
-/* Estilos del encabezado */
-.header {
-    background-color: #1abb2e;
-    color: white;
-    padding: 2rem;
+    color: rgb(193, 163, 98);
     text-align: center;
-    border-radius: 0.5rem;
 }
 
-.header h1 {
-    font-size: 3rem;
-    font-weight: bold;
+/* Personalización de los campos del formulario */
+.form-control, .form-select, textarea {
+    background-color: rgba(193, 163, 98, 0.1);
+    border: 1px solid rgba(193, 163, 98, 0.6);
+    color: #5a4a2e;
 }
 
-/* Estilos para la lista */
-.list-group-item {
-    background-color: #f4f4f4;
-    border: none;
-    border-radius: 0.5rem;
-    margin-bottom: 1rem;
-    transition: background-color 0.3s ease;
+/* Cambiar el color del placeholder */
+::placeholder {
+    color: rgba(90, 74, 46, 0.7);
 }
 
-.list-group-item:hover {
-    background-color: #cfe2ff;
-}
-
-.list-group-item-action {
-    text-align: center;
-    font-size: 1.2rem;
-    font-weight: 500;
-}
-
-/* Estilos para la tabla */
-.table {
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.table th {
-    background-color: #1abb2e;
-    color: white;
-}
-
-.table-striped tbody tr:nth-of-type(odd) {
-    background-color: rgba(0, 0, 0, 0.05);
-}
-
-.table-hover tbody tr {
-    transition: background-color 0.3s ease;
-}
-
-.table-hover tbody tr:hover {
-    background-color: rgba(26, 187, 46, 0.1) !important;
-}
-
-.table th, .table td {
-    vertical-align: middle;
-}
-
-/* Estilos para los botones */
-.btn {
-    transition: transform 0.2s ease-in-out;
-}
-
-.btn:hover {
-    transform: scale(1.05);
-}
-
-.btn-warning {
-    background-color: #ffc107;
-    border-color: #ffc107;
-}
-
-.btn-warning:hover {
-    background-color: #f0ad4e;
+/* Botones */
+.btn-primary {
+    background-color: rgb(193, 163, 98);
+    border-color: rgb(193, 163, 98);
 }
 
 .btn-danger {
-    background-color: #dc3545;
-    border-color: #dc3545;
+    background-color: #dbba5e;
+    border-color: #dbba5e;
 }
 
-.btn-danger:hover {
-    background-color: #d9534f;
+/* Tabla */
+.table thead {
+    background-color: #dbba5e;
 }
 
-.btn-primary {
-    background-color: #1abb2e;
-    border-color: #1abb2e;
-}
-
-.btn-primary:hover {
-    background-color: #17a923;
-}
-
-.btn-back {
-    background-color: #6c757d;
-    color: white;
-    border: none;
-}
-
-/* Otros estilos */
-.navbar {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-h2 {
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.no-orders {
-    text-align: center;
-    font-size: 18px;
-    color: #777;
-    margin-top: 20px;
+/* Efecto hover en las filas de la tabla */
+.table tbody tr:hover {
+    background-color: rgba(193, 163, 98, 0.2);
 }

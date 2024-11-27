@@ -10,12 +10,10 @@ public class Detalle_Pedido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id_detalle;
-
     @ManyToOne
     @JoinColumn(name = "id_pedido")
     @NotNull(message = "El pedido no puede ser nulo.")
     private Pedido pedido;
-
     @ManyToOne
     @JoinColumn(name = "id_producto")
     @NotNull(message = "El producto no puede ser nulo.")
@@ -31,12 +29,8 @@ public class Detalle_Pedido {
     @Temporal(TemporalType.DATE)
     @NotNull(message = "La fecha del detalle es requerida.")
     private Date fecha_detalle;
-
     private String estado_detalle;
-
     private double descuento;
-
-
     // Constructor vacío
     public Detalle_Pedido() {}
 

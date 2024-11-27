@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Productos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="mb-4">Gestión de Productos</h1>
+
+    <div id="mensajes" class="alert" style="display: none;"></div>
+
+    <form id="productoForm" class="p-4 rounded shadow-sm" style="background-color: rgba(193, 163, 98, 0.15);">
+        <input type="hidden" id="productoId">
+
+        <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="nombre" placeholder="Escribe el nombre del producto" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="descripcion" class="form-label">Descripción</label>
+            <textarea class="form-control" id="descripcion" rows="3" placeholder="Descripción del producto" required></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="precio" class="form-label">Precio</label>
+            <input type="number" step="0.01" class="form-control" id="precio" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="categoria" class="form-label">Categoría</label>
+            <select class="form-select" id="categoria" required>
+                <option value="Bebidas Calientes">Bebidas Calientes</option>
+                <option value="Bebidas Frías">Bebidas Frías</option>
+                <option value="Jugos">Jugos</option>
+                <option value="Batidos">Batidos</option>
+                <option value="Sandwich">Sandwich</option>
+                <option value="Wafle">Wafle</option>
+                <option value="Bowl">Bowl</option>
+                <option value="Postres">Postres</option>
+                <option value="Bolleria">Bolleria</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="estado_producto" class="form-label">Estado del Producto</label>
+            <select class="form-select" id="estado_producto" required>
+                <option value="Disponible">Disponible</option>
+                <option value="No Disponible">No Disponible</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="tamaño" class="form-label">Tamaño</label>
+            <input type="text" class="form-control" id="tamaño" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="fecha_registro" class="form-label">Fecha de Registro</label>
+            <input type="date" class="form-control" id="fecha_registro" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="alergenos" class="form-label">Alérgenos</label>
+            <input type="text" class="form-control" id="alergenos" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Guardar Producto</button>
+        <a href="index.html" class="btn btn-danger">Cancelar</a>
+    </form>
+
+    <table class="table table-hover mt-4">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Precio</th>
+            <th>Categoría</th>
+            <th>Estado</th>
+            <th>Tamaño</th>
+            <th>Alérgenos</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody id="productosTableBody">
+        </tbody>
+    </table>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:8080/api/productos';
+
+    // Mostrar mensajes en la pantalla
+    function mostrarMensaje(mensaje, tipo) {
+        const mensajesDiv = document.getElementById('mensajes');
+        mensajesDiv.textContent = mensaje;
+        mensajesDiv.className = `alert alert-${tipo}`;
+        mensajesDiv.style.display = 'block';
+        setTimeout(() => mensajesDiv.style.display = 'none', 5000);
+    }
+
+    // Cargar todos los productos al iniciar la página
+    function cargarProductos() {
+        fetch(API_URL)
+            .then(response => response.json())
+            .then(productos => {
+                const tableBody = document.getElementById('productosTableBody');
+                tableBody.innerHTML = '';
+                productos.forEach(producto => {
+                    const row = `
+                        <tr data-id="${producto.id_producto}">
+                            <td>${producto.id_producto}</td>
+                            <td>${producto.nombre}</td>
+                            <td>${producto.descripcion}</td>
+                            <td>${producto.precio}</td>
+                            <td>${producto.categoria}</td>
+                            <td>${producto.estado_producto}</td>
+                            <td>${producto.tamaño}</td>
+                            <td>${producto.alergenos}</td>
+                            <td>
+                                <button onclick="editarProducto(${producto.id_producto})" class="btn btn-sm btn-warning">Editar</button>
+                                <button onclick="eliminarProducto(${producto.id_producto})" class="btn btn-sm btn-danger">Eliminar</button>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.innerHTML += row;
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                mostrarMensaje('Error al cargar productos', 'danger');
+            });
+    }
+
+    // Manejar el envío del formulario para agregar o editar productos
+    document.getElementById('productoForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const productoId = document.getElementById('productoId').value;
+        const producto = {
+            nombre: document.getElementById('nombre').value,
+            descripcion: document.getElementById('descripcion').value,
+            precio: document.getElementById('precio').value,
+            categoria: document.getElementById('categoria').value,
+            estado_producto: document.getElementById('estado_producto').value,
+            tamaño: document.getElementById('tamaño').value,
+            fecha_registro: document.getElementById('fecha_registro').value,
+            alergenos: document.getElementById('alergenos').value
+        };
+
+        const method = productoId ? 'PUT' : 'POST';
+        const url = productoId ? `${API_URL}/${productoId}` : API_URL;
+
+        fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(producto)
+        })
+            .then(response => response.json())
+            .then(() => {
+                cargarProductos();
+                document.getElementById('productoForm').reset();
+                document.getElementById('productoId').value = '';
+                mostrarMensaje('Producto guardado con éxito', 'success');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                mostrarMensaje('Error al guardar producto', 'danger');
+            });
+    });
+
+    // Función para editar un producto
+    function editarProducto(id) {
+        fetch(`${API_URL}/${id}`)
+            .then(response => response.json())
+            .then(producto => {
+                document.getElementById('productoId').value = producto.id_producto;
+                document.getElementById('nombre').value = producto.nombre;
+                document.getElementById('descripcion').value = producto.descripcion;
+                document.getElementById('precio').value = producto.precio;
+                document.getElementById('categoria').value = producto.categoria;
+                document.getElementById('estado_producto').value = producto.estado_producto;
+                document.getElementById('tamaño').value = producto.tamaño;
+                document.getElementById('fecha_registro').value = producto.fecha_registro;
+                document.getElementById('alergenos').value = producto.alergenos;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                mostrarMensaje('Error al cargar producto para editar', 'danger');
+            });
+    }
+
+    // Función para eliminar un producto
+    function eliminarProducto(id) {
+        if (confirm('¿Está seguro de que desea eliminar este producto?')) {
+            fetch(`${API_URL}/${id}`, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(() => {
+                    cargarProductos();
+                    mostrarMensaje('Producto eliminado con éxito', 'success');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    mostrarMensaje('Error al eliminar producto', 'danger');
+                });
+        }
+    }
+
+    // Cargar los productos al cargar la página
+    cargarProductos();
+</script>
+</body>
+</html>

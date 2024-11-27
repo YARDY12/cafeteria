@@ -1,0 +1,31 @@
+/* Estilo para el fondo */
+body {
+    background-image: url('https://scontent-lim1-1.xx.fbcdn.net/v/t39.30808-6/307891694_123345743814821_4807950172592411700_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=127cfc&_nc_ohc=4svEr-fWXZkQ7kNvgGigLZA&_nc_zt=23&_nc_ht=scontent-lim1-1.xx&_nc_gid=ALPoJuXmkNYnFfxPuKroVHd&oh=00_AYA06264uL-ZsN_l8ZY7Sei5rAeGScRzSOzb67S2YUXy-A&oe=673ED3B9');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Contenedor del login */
+.login-container {
+    background-color: rgba(255, 255, 255, 0.8); /* Fondo blanco con transparencia */
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    padding: 2rem;
+    width: 400px;
+}
+
+/* Logo */
+.logo {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 1rem;
+    display: block;
+}
+
+
+

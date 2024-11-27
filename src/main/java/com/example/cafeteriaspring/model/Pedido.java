@@ -13,12 +13,10 @@ public class Pedido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id_pedido;
-
     @ManyToOne
     @JoinColumn(name="id_empleado")
     @NotNull(message = "El empleado es requerido")
     private Empleado empleado;
-
     @ManyToOne
     @JoinColumn(name="id_producto")
     @NotNull(message = "El producto es requerido")
@@ -28,7 +26,6 @@ public class Pedido {
     private int num_mesa;
     @NotBlank(message = "El nombre del cliente es requerido")
     private String nom_cliente;
-
     private String nota_especial;
     @NotNull(message = "El total es requerido")
     @Positive(message = "El total debe ser un número positivo")

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Detalles de Pedido</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="mb-4">Gestión de Detalles de Pedido</h1>
+
+    <!-- Div para mostrar mensajes -->
+    <div id="mensajes" class="alert" style="display: none;"></div>
+
+    <!-- Formulario para crear/editar detalle de pedido -->
+    <form id="detallePedidoForm" class="mb-4">
+        <input type="hidden" id="detallePedidoId">
+
+        <div class="mb-3">
+            <label for="pedido" class="form-label">Pedido</label>
+            <select class="form-select" id="pedido" required>
+                <!-- Opciones de pedidos se cargarán dinámicamente -->
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="producto" class="form-label">Producto</label>
+            <select class="form-select" id="producto" required>
+                <!-- Opciones de productos se cargarán dinámicamente -->
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="cantidad" class="form-label">Cantidad</label>
+            <input type="number" class="form-control" id="cantidad" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="nota_detalle" class="form-label">Nota Detalle</label>
+            <textarea class="form-control" id="nota_detalle"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="fecha_detalle" class="form-label">Fecha</label>
+            <input type="date" class="form-control" id="fecha_detalle" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="estado_detalle" class="form-label">Estado</label>
+            <select class="form-select" id="estado_detalle" required>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Completado">Completado</option>
+                <option value="Cancelado">Cancelado</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="descuento" class="form-label">Descuento</label>
+            <input type="number" step="0.01" class="form-control" id="descuento">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Guardar Detalle Pedido</button>
+        <a href="index.html" class="btn btn-danger">Cancelar</a>
+    </form>
+
+    <!-- Tabla de detalles de pedidos -->
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID Detalle</th>
+            <th>Pedido</th>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Subtotal</th>
+            <th>Estado</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody id="detallePedidosTableBody">
+        <!-- Los detalles de pedidos se insertarán aquí dinámicamente -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:8080/api/detalle-pedidos';
+    let productos = []; // Aquí almacenaremos los productos cargados para acceder a su precio
+
+    // Función para mostrar mensajes
+    function mostrarMensaje(mensaje, tipo) {
+        const mensajesDiv = document.getElementById('mensajes');
+        mensajesDiv.textContent = mensaje;
+        mensajesDiv.className = `alert alert-${tipo}`;
+        mensajesDiv.style.display = 'block';
+        setTimeout(() => mensajesDiv.style.display = 'none', 5000);
+    }
+
+    // Cargar pedidos
+    function cargarPedidos() {
+        fetch('http://localhost:8080/api/pedidos')
+            .then(response => response.json())
+            .then(pedidos => {
+                const selectPedido = document.getElementById('pedido');
+                pedidos.forEach(pedido => {
+                    const option = document.createElement('option');
+                    option.value = pedido.id_pedido;
+                    option.textContent = `Pedido #${pedido.id_pedido} - Mesa ${pedido.num_mesa}`;
+                    selectPedido.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error al cargar pedidos:', error));
+    }
+
+    // Cargar productos y guardar los precios
+    function cargarProductos() {
+        fetch('http://localhost:8080/api/productos')
+            .then(response => response.json())
+            .then(data => {
+                productos = data; // Guardamos los productos para acceder a sus precios más adelante
+                const selectProducto = document.getElementById('producto');
+                productos.forEach(producto => {
+                    const option = document.createElement('option');
+                    option.value = producto.id_producto;
+                    option.textContent = producto.nombre;
+                    selectProducto.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error al cargar productos:', error));
+    }
+
+    // Función para calcular el subtotal
+    function calcularSubtotal() {
+        const productoId = document.getElementById('producto').value;
+        const cantidad = document.getElementById('cantidad').value;
+
+        if (productoId && cantidad) {
+            const producto = productos.find(p => p.id_producto == productoId);
+            const subtotal = producto.precio * cantidad;
+            return subtotal;
+        }
+        return 0;
+    }
+
+    // Cargar detalles de pedidos
+    function cargarDetallesPedidos() {
+        fetch(`${API_URL}`)
+            .then(response => response.json())
+            .then(detalles => {
+                const tableBody = document.getElementById('detallePedidosTableBody');
+                tableBody.innerHTML = '';
+                detalles.forEach(detalle => {
+                    const row = `
+                    <tr data-id="${detalle.id_detalle}">
+                        <td>${detalle.id_detalle}</td>
+                        <td>${detalle.pedido.id_pedido}</td>
+                        <td>${detalle.producto.nombre}</td>
+                        <td>${detalle.cantidad}</td>
+                        <td>${detalle.subtotal}</td>
+                        <td>${detalle.estado_detalle}</td>
+                        <td>${detalle.fecha_detalle}</td>
+                        <td>
+                            <button onclick="editarDetallePedido(${detalle.id_detalle})" class="btn btn-sm btn-warning">Editar</button>
+                            <button onclick="eliminarDetallePedido(${detalle.id_detalle})" class="btn btn-sm btn-danger">Eliminar</button>
+                        </td>
+                    </tr>
+                `;
+                    tableBody.innerHTML += row;
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Guardar detalle de pedido
+    document.getElementById('detallePedidoForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const detallePedidoId = document.getElementById('detallePedidoId').value;
+        const subtotal = calcularSubtotal(); // Calcular el subtotal antes de enviar los datos
+        const detallePedido = {
+            pedido: { id_pedido: document.getElementById('pedido').value },
+            producto: { id_producto: document.getElementById('producto').value },
+            cantidad: document.getElementById('cantidad').value,
+            subtotal: subtotal,
+            nota_detalle: document.getElementById('nota_detalle').value,
+            fecha_detalle: document.getElementById('fecha_detalle').value,
+            estado_detalle: document.getElementById('estado_detalle').value,
+            descuento: document.getElementById('descuento').value
+        };
+
+        const method = detallePedidoId ? 'PUT' : 'POST';
+        const url = detallePedidoId ? `${API_URL}/${detallePedidoId}` : API_URL;
+
+        fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(detallePedido)
+        })
+            .then(response => {
+                if (!response.ok) throw new Error(`Error: ${response.status}`);
+                return response.json();
+            })
+            .then(() => {
+                cargarDetallesPedidos();
+                document.getElementById('detallePedidoForm').reset();
+                document.getElementById('detallePedidoId').value = '';
+                mostrarMensaje('Detalle guardado con éxito', 'success');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                mostrarMensaje(`Error al guardar detalle: ${error.message}`, 'danger');
+            });
+    });
+
+    // Función para cargar detalles al iniciar
+    document.addEventListener('DOMContentLoaded', function() {
+        cargarPedidos();
+        cargarProductos();
+        cargarDetallesPedidos();
+    });
+</script>
+</body>
+</html>

@@ -1,49 +1,106 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cafeteria - Página Principal</title>
+    <title>Cafetería - Página Principal</title>
+
+    <!-- CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
-    <link href="style.css" rel="stylesheet">
+    <style>
+        /* Fondo principal con un color cálido */
+        body {
+            background-color: #f5e8c7;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+
+        /* Barra de navegación */
+        .navbar {
+            background-color: #6d4c41;
+        }
+
+        /* Tarjeta principal */
+        .card {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            padding: 2rem;
+            width: 500px;
+        }
+
+        /* Estilo del logo */
+        .logo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto;
+            display: block;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Títulos centrados */
+        h1, p {
+            text-align: center;
+        }
+
+        /* Estilo de los elementos del grupo */
+        .list-group-item {
+            transition: all 0.3s ease-in-out;
+            border: none;
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .list-group-item:hover {
+            background-color: #8bc34a;
+            color: white;
+            transform: scale(1.05);
+        }
+    </style>
 </head>
 <body>
-<div class="container mt-5">
-    <div class="header mb-3 text-center d-flex align-items-center justify-content-center">
-        <div class="text-content">
-            <h1 class="animate__animated animate__fadeInDown">Bienvenido a la Página Principal</h1>
-            <p class="lead animate__animated animate__fadeInUp">Gestión de Pedidos</p>
-        </div>
-        <img src="https://scontent.flim1-2.fna.fbcdn.net/v/t39.30808-6/297028427_104101122405950_7133737936724523807_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=bSe2HU9X7EkQ7kNvgH1DkVi&_nc_ht=scontent.flim1-2.fna&_nc_gid=AUbRHwpF-8FHAOTmbnvE2GM&oh=00_AYCKtGPunOd01uskpGXhXc5bec-iD-lCuRkioXvtCk-BxQ&oe=67048E74" alt="" class="mi-imagen">
+
+<!-- Barra de navegación -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">Cafetería Agosto 18</a>
+    </div>
+</nav>
+
+<div class="card animate__animated animate__fadeInUp">
+    <img src="https://scontent-lim1-1.xx.fbcdn.net/v/t39.30808-6/297028427_104101122405950_7133737936724523807_n.jpg?stp=dst-jpg_s206x206_tt6&_nc_cat=102&ccb=1-7&_nc_sid=7a06f5&_nc_ohc=ScE174HHsUwQ7kNvgFbn0ky&_nc_zt=23&_nc_ht=scontent-lim1-1.xx&_nc_gid=AfC0DRMADqRMuGUpYHJyv7N&oh=00_AYBFjFJvhXTgGwEydrrSzWDYUKyhHBVXJoyuRWOI0L-JAw&oe=673EC8B4"
+         alt="Logo Cafetería" class="logo mb-4">
+
+    <div class="text-center mb-4">
+        <h1 class="animate__animated animate__fadeInDown">Bienvenido</h1>
+        <p class="lead">Gestiona los Pedidos, Productos y Empleados</p>
     </div>
 
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="list-group">
-                <a href="pedido-form.html" class="list-group-item list-group-item-action">
-                    <i class="bi bi-pencil-square"></i> Registrar Pedido
-                </a>
-                <a href="pedido-list.html" class="list-group-item list-group-item-action">
-                    <i class="bi bi-list-check"></i> Lista de Pedidos
-                </a>
-                <a href="producto-form.html" class="list-group-item list-group-item-action">
-                    <i class="bi bi-pencil-square"></i> Registrar un Producto
-                </a>
-                <a href="producto-list.html" class="list-group-item list-group-item-action">
-                    <i class="bi bi-list-check"></i> Lista de Productos
-                </a>
-
-                <a href="detalle-list.html" class="list-group-item list-group-item-action">
-                    <i class="bi bi-receipt"></i> Detalle Pedido
-                </a>
-            </div>
-        </div>
+    <div class="list-group">
+        <a href="pedido.html" class="list-group-item list-group-item-action">
+            <i class="bi bi-pencil-square"></i> Gestión de Pedidos
+        </a>
+        <a href="empleado.html" class="list-group-item list-group-item-action">
+            <i class="bi bi-person-plus-fill"></i> Gestión de Empleados
+        </a>
+        <a href="producto.html" class="list-group-item list-group-item-action">
+            <i class="bi bi-bag-plus"></i> Gestión de Productos
+        </a>
+        <a href="detalle_pedido.html" class="list-group-item list-group-item-action">
+            <i class="bi bi-file-text"></i> Gestión de Detalles de Pedido
+        </a>
     </div>
 </div>
 
+<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="JS.js"></script>
 </body>
 </html>

@@ -1,7 +1,10 @@
 package com.example.cafeteriaspring.service;
+
 import com.example.cafeteriaspring.model.Usuario;
 import com.example.cafeteriaspring.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,37 +13,47 @@ import java.util.List;
 public class UsuarioService {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UsuarioRepository userRepository;
 
-    // Método para obtener todos los usuarios
-    public List<Usuario> getAllUsuarios() {
-        return usuarioRepository.findAll();
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    public List<Usuario> getUsuarios() {
+        return userRepository.findAll();
     }
 
-    // Método para obtener un usuario por su ID
-    public Usuario getUsuarioById(int id) {
-        return usuarioRepository.findById(id).orElse(null);
+    public Usuario getUserById(int id) {
+        return userRepository.findById(id).orElse(null);
     }
 
-    // Método para agregar un nuevo usuario
-    public Usuario addUsuario(Usuario usuario) {
-        return usuarioRepository.save(usuario);
+    public Usuario createUser(Usuario user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepository.save(user);
     }
 
-    // Método para actualizar un usuario existente
-    public Usuario updateUsuario(int id, Usuario usuarioDetails) {
-        Usuario usuario = usuarioRepository.findById(id).orElse(null);
-        if (usuario != null) {
-            usuario.setNombre_usuario(usuarioDetails.getNombre_usuario());
-            usuario.setContraseña(usuarioDetails.getContraseña());
-            return usuarioRepository.save(usuario);
+    public Usuario updateUser(int id, Usuario user) {
+        Usuario userActual = userRepository.findById(id).orElse(null);
+        if (userActual != null) {
+            userActual.setUsername(user.getUsername());
+            if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+                userActual.setPassword(passwordEncoder.encode(user.getPassword()));
+            }
+            userActual.setNombre(user.getNombre());
+            userActual.setApellido(user.getApellido());
+            userActual.setEmail(user.getEmail());
+            userActual.setRoles(user.getRoles());
+            return userRepository.save(userActual);
         }
         return null;
     }
 
-    // Método para eliminar un usuario
-    public void deleteUsuario(int id) {
-        usuarioRepository.deleteById(id);
+    public void deleteUser(int id) {
+        userRepository.deleteById(id);
+    }
+
+    public Usuario findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
     }
 
 }

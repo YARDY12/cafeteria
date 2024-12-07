@@ -7,6 +7,7 @@ import com.example.cafeteriaspring.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -68,20 +69,27 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+        return http
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .authenticationProvider(authenticationProvider())
-                .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/authenticate").permitAll()
-                            .requestMatchers("/api/**").authenticated()
-                            .anyRequest().permitAll();
-                })
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/authenticate").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/empleados").hasAnyRole("ADMIN", "USER") // GET accesible para USER y ADMIN
+                        .requestMatchers(HttpMethod.GET, "/api/productos").hasAnyRole("ADMIN", "USER") // GET accesible para USER y ADMIN
+                        .requestMatchers("/api/productos/**").hasRole("ADMIN")
+                        .requestMatchers("/api/usuarios/**").hasRole("ADMIN")
+                        .requestMatchers("/api/empleados/**").hasRole("ADMIN")
+                        .requestMatchers("/api/pedidos/**").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/api/detalle-pedidos/**").hasAnyRole("ADMIN", "USER")
+                        //.requestMatchers("/api/**").authenticated()
+                        .anyRequest().authenticated()
+                )
+                .addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class)
+                .authenticationProvider(authenticationProvider())
+                .build();
     }
 
     @Bean

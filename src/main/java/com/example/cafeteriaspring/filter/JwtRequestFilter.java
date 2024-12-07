@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -29,6 +30,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
+
         final String authorizationHeader = request.getHeader("Authorization");
 
         String username = null;
@@ -38,21 +40,29 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             jwt = authorizationHeader.substring(7);
             try {
                 username = jwtUtil.extractUsername(jwt);
+                logger.info("JWT Token procesado para el usuario: " + username);
             } catch (Exception e) {
-                // Handle JWT exceptions
+                logger.error("Error al procesar el token JWT", e);
             }
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             if (!jwtUtil.isTokenExpired(jwt)) {
+                String role = jwtUtil.extractRole(jwt);
+                logger.info("Rol extraído y procesado del token: " + role);
+
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(
                                 userDetails,
                                 null,
                                 userDetails.getAuthorities()
                         );
+
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+                logger.info("Usuario autenticado: " + username + " con roles: " + userDetails.getAuthorities());
+            } else {
+                logger.warn("Token expirado para el usuario: " + username);
             }
         }
 

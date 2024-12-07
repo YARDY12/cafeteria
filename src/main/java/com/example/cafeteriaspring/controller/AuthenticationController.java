@@ -13,16 +13,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static javax.swing.UIManager.put;
 
 @RestController
 public class AuthenticationController {

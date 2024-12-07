@@ -20,7 +20,7 @@ public class JwtUtil {
 
     public String generateToken(String username, String role) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", role);
+        claims.put("role", role.startsWith("ROLE_") ? role : "ROLE_" + role);
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(username)
@@ -43,7 +43,8 @@ public class JwtUtil {
     }
 
     public String extractRole(String token) {
-        return (String) extractAllClaims(token).get("role");
+        String role = (String) extractAllClaims(token).get("role");
+        return role.startsWith("ROLE_") ? role : "ROLE_" + role;
     }
 
     public boolean isTokenExpired(String token) {
